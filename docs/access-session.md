@@ -19,7 +19,7 @@ Express atende `/api/auth`; `api/auth.ts` disponibiliza o mesmo handler como fun
 
 Este trabalho preserva o armazenamento existente. Nao cria tabelas no Supabase nem disponibiliza a API de arquivos na Vercel; o diagnostico anterior de persistencia continua aplicavel. O provedor deve oferecer protecao contra abuso/tentativas repetidas; nao ha limitador distribuido nesta implementacao.
 
-A ativacao em producao depende das quatro variaveis privadas acima. Nao publicar a nova tela antes de configura-las: sem elas os usuarios nao conseguirao entrar. No momento da validacao local, nao havia acesso autenticado a configuracao da Vercel e este conjunto de alteracoes nao foi publicado.
+A ativacao em producao depende das quatro variaveis privadas acima. Em 2026-11-11, apos o usuario autenticar a Vercel, as quatro foram salvas como Secret exclusivamente em Production no projeto gestaorx. O commit 6e97a8f foi enviado a main e a Vercel confirmou deploy concluido. Login das tres contas e restauracao de sessao foram verificados em https://gestaorx.vercel.app, com cookies Secure e HttpOnly e sem senha na resposta. Preview continua sem essas quatro variaveis; nao e um ambiente de login configurado.
 
 ## Evidencias de 2026-11-11
 

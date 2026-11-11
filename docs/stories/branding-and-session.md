@@ -1,6 +1,6 @@
 # Marca e sessao de acesso
 
-Status: Ready for Review (implementacao local; ativacao em producao pendente)
+Status: Ready for Review (publicado e validado em producao)
 
 ## Aceite
 - [x] Logo fornecida aplicada no login, barra lateral, favicon, icone de dispositivo e metadados de compartilhamento.
@@ -17,7 +17,7 @@ Preservar funcionalidades e usuarios atuais. Nao inclui migracao do banco Supaba
 ## Publicacao
 O backend de sessao requer SESSION_SECRET aleatoria de pelo menos 32 caracteres no servidor/Vercel. Nunca versionar seu valor. Nao usar chave publica ou segredo exposto como chave de assinatura.
 
-Tambem requer RX_EMANUEL_PASSWORD, RX_RENAN_PASSWORD e RX_VITOR_PASSWORD privadas com os valores existentes. Configuradas no .env local ignorado; configuracao da Vercel nao acessivel nesta sessao. Nenhum push/deploy desta story ate essa preparacao. Ver `docs/access-session.md` para evidencias, limites e passos de ativacao.
+Tambem requer RX_EMANUEL_PASSWORD, RX_RENAN_PASSWORD e RX_VITOR_PASSWORD privadas com os valores existentes. Configuradas no .env local ignorado e como Secret em Production na Vercel apos conexao autorizada pelo usuario. Commit 6e97a8f publicado via GitHub main e deploy Vercel concluido. Ver `docs/access-session.md` para evidencias e limites.
 
 ## Validacao
 
