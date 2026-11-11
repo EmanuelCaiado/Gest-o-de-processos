@@ -21,6 +21,55 @@
   }
 }
 
+html, body, #root { min-width: 0; width: 100%; margin: 0; }
+button, input, select, textarea { font-family: inherit; }
+button { touch-action: manipulation; }
+:focus-visible { outline: 2px solid #651D32; outline-offset: 3px; }
+.workspace-content { scrollbar-gutter: stable; }
+.workspace-content > div { width: 100%; min-width: 0; }
+.mobile-tabs { padding-bottom: env(safe-area-inset-bottom); }
+.workspace-header h2 { overflow-wrap: anywhere; }
+@media (min-width: 640px) {
+  .responsive-records { min-width: 760px; }
+}
+
+@media (max-width: 1023px) {
+  .workspace-content { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+  .workspace-content .grid > * { min-width: 0; }
+  .workspace-content p, .workspace-content h1, .workspace-content h2, .workspace-content h3 { overflow-wrap: anywhere; }
+  button, [role="button"] { min-height: 44px; min-width: 44px; }
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { min-height: 44px; font-size: 16px; max-width: 100%; }
+  label { line-height: 1.5; }
+}
+
+@media (max-width: 639px) {
+  .workspace-content { font-size: 14px; line-height: 1.6; }
+  .workspace-content .text-xs { font-size: 14px; line-height: 1.5; }
+  .workspace-content .text-\[11px\], .workspace-content .text-\[10px\], .workspace-content .text-\[9px\] { font-size: 12px; line-height: 1.5; }
+  .workspace-content .p-6 { padding: 1rem; }
+  .workspace-content .flex { min-width: 0; }
+  .workspace-content .overflow-x-auto { max-width: 100%; overscroll-behavior-x: contain; }
+  .workspace-content .overflow-x-auto > button { flex-shrink: 0; white-space: nowrap; }
+  .workspace-content select { width: 100%; min-width: 0; }
+  .workspace-header h2 { font-size: 16px; line-height: 1.4; }
+  .workspace-header p { font-size: 12px; }
+  .header-actions > button { flex-shrink: 0; padding-inline: 10px; }
+  .responsive-records, .responsive-records tbody { display: block; width: 100%; }
+  .responsive-records thead { display: none; }
+  .workspace-content button.truncate { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .responsive-records tbody tr { display: grid; grid-template-columns: minmax(0, 1fr); padding: 12px; gap: 4px; border-bottom: 1px solid #E8DFE3; }
+  .responsive-records tbody td { display: block; width: 100%; max-width: none; padding: 4px 0; white-space: normal; text-align: left; overflow-wrap: anywhere; }
+  .responsive-records tbody td::before { content: attr(data-label); display: block; font-size: 12px; font-weight: 600; color: #626262; margin-bottom: 2px; }
+  .responsive-records .truncate { white-space: normal; overflow: visible; }
+  .responsive-records td > .flex { justify-content: flex-start; }
+  .responsive-records input, .responsive-records select { width: 100%; }
+  [role="dialog"] { max-height: calc(100dvh - 2rem); overflow-y: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
 /* Custom scrollbars for Kanban and tables */
 ::-webkit-scrollbar {
   width: 6px;

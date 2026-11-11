@@ -106,7 +106,7 @@ export const TasksView: React.FC = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
+    <div className="p-4 sm:p-6 xl:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
       {/* Subtabs Bar (5 abas obrigatórias: Hoje, Atrasadas, Próximas, Concluídas, Todas) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-[#EFE8EB] shadow-xs">
         <div className="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0">
@@ -238,9 +238,9 @@ export const TasksView: React.FC = () => {
       </div>
 
       {/* Tasks Table */}
-      <div className="bg-white rounded-xl border border-[#EFE8EB] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#EFE8EB] shadow-xs overflow-x-auto">
         {filteredTasks.length === 0 ? (
-          <div className="p-12 text-center text-xs text-[#777777] space-y-2">
+          <div className="p-6 sm:p-12 text-center text-xs text-[#777777] space-y-2">
             <CheckSquare className="w-10 h-10 mx-auto text-gray-300" />
             <p className="font-semibold text-[#202020] text-sm">Nenhuma tarefa encontrada</p>
             <p className="text-[11px]">
@@ -260,7 +260,7 @@ export const TasksView: React.FC = () => {
             )}
           </div>
         ) : (
-          <table className="w-full text-left text-xs">
+          <table className="responsive-records w-full text-left text-xs">
             <thead className="bg-[#F8F8F8] border-b border-[#EFE8EB] text-[#777777] uppercase text-[11px] font-semibold">
               <tr>
                 <th className="py-3 px-4 w-10">Concluir</th>
@@ -282,7 +282,7 @@ export const TasksView: React.FC = () => {
                 return (
                   <tr key={task.id} className="hover:bg-[#FDFBFC] transition group">
                     {/* Checkbox */}
-                    <td className="py-3 px-4">
+                    <td data-label="Concluir" className="py-3 px-4">
                       <button
                         onClick={() => toggleTaskComplete(task.id)}
                         className={`rounded border-2 transition cursor-pointer flex items-center justify-center ${
@@ -297,7 +297,7 @@ export const TasksView: React.FC = () => {
                     </td>
 
                     {/* Title */}
-                    <td className="py-3 px-4 font-medium max-w-md">
+                    <td data-label="Atividade" className="py-3 px-4 font-medium max-w-md">
                       <button
                         onClick={() => setSelectedTaskId(task.id)}
                         className={`text-left block w-full cursor-pointer truncate ${
@@ -312,7 +312,7 @@ export const TasksView: React.FC = () => {
                     </td>
 
                     {/* Client Link & Stage */}
-                    <td className="py-3 px-4 whitespace-nowrap">
+                    <td data-label="Cliente / etapa" className="py-3 px-4 whitespace-nowrap">
                       <button
                         onClick={() => openClientPage(task.clientId)}
                         className="font-bold text-[#651D32] hover:underline text-left block cursor-pointer"
@@ -326,7 +326,7 @@ export const TasksView: React.FC = () => {
                     </td>
 
                     {/* Responsible Selector */}
-                    <td className="py-3 px-4 whitespace-nowrap">
+                    <td data-label="Responsável" className="py-3 px-4 whitespace-nowrap">
                       <select
                         value={task.responsibleId}
                         onChange={(e) => {
@@ -350,7 +350,7 @@ export const TasksView: React.FC = () => {
                     </td>
 
                     {/* Due Date */}
-                    <td className="py-3 px-4 whitespace-nowrap">
+                    <td data-label="Prazo" className="py-3 px-4 whitespace-nowrap">
                       <input
                         type="date"
                         value={task.dueDate || ''}
@@ -366,7 +366,7 @@ export const TasksView: React.FC = () => {
                     </td>
 
                     {/* Priority */}
-                    <td className="py-3 px-4 whitespace-nowrap">
+                    <td data-label="Prioridade" className="py-3 px-4 whitespace-nowrap">
                       <select
                         value={task.priority}
                         onChange={(e) => updateTask({ ...task, priority: e.target.value as typeof task.priority })}
@@ -385,7 +385,7 @@ export const TasksView: React.FC = () => {
                     </td>
 
                     {/* Status */}
-                    <td className="py-3 px-4 whitespace-nowrap">
+                    <td data-label="Status" className="py-3 px-4 whitespace-nowrap">
                       <select
                         value={task.status}
                         onChange={(e) => {
@@ -414,7 +414,7 @@ export const TasksView: React.FC = () => {
                     </td>
 
                     {/* Actions */}
-                    <td className="py-3 px-4 text-right whitespace-nowrap">
+                    <td data-label="Ações" className="py-3 px-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end space-x-1">
                         <button
                           onClick={() => setSelectedTaskId(task.id)}

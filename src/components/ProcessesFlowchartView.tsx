@@ -45,7 +45,7 @@ export const ProcessesFlowchartView: React.FC = () => {
 
   if (clients.length === 0) {
     return (
-      <div className="p-8 max-w-4xl mx-auto space-y-6 animate-in fade-in duration-200">
+      <div className="p-4 sm:p-6 xl:p-8 max-w-4xl mx-auto space-y-6 animate-in fade-in duration-200">
         <div className="bg-white rounded-2xl border border-[#EFE8EB] p-10 text-center shadow-xs">
           <div className="w-16 h-16 bg-[#F4E9ED] rounded-2xl flex items-center justify-center mx-auto mb-4 text-[#651D32]">
             <Layers className="w-8 h-8" />
@@ -84,9 +84,9 @@ export const ProcessesFlowchartView: React.FC = () => {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
+    <div className="p-4 sm:p-6 xl:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
       {/* Top Header & Client Switcher */}
-      <div className="bg-white rounded-xl border border-[#EFE8EB] p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-xl border border-[#EFE8EB] p-6 shadow-xs flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
             <span className="text-[10px] font-bold text-[#651D32] uppercase tracking-wider bg-[#F4E9ED] px-2.5 py-0.5 rounded">
@@ -103,13 +103,13 @@ export const ProcessesFlowchartView: React.FC = () => {
         </div>
 
         {/* Client Selector & Overall Badge */}
-        <div className="flex items-center space-x-3">
-          <div className="text-right">
+        <div className="flex items-center gap-3 min-w-0 xl:max-w-md">
+          <div className="text-left min-w-0 flex-1">
             <label className="text-[11px] font-medium text-[#777777] block">Visualizando Cliente:</label>
             <select
               value={currentClient?.id || ''}
               onChange={(e) => setSelectedClientId(e.target.value)}
-              className="bg-[#F8F8F8] border border-[#EFE8EB] rounded-lg px-3 py-1.5 text-xs font-bold text-[#202020] focus:ring-1 focus:ring-[#651D32] cursor-pointer"
+              className="w-full min-w-0 bg-[#F8F8F8] border border-[#EFE8EB] rounded-lg px-3 py-1.5 text-xs font-bold text-[#202020] focus:ring-1 focus:ring-[#651D32] cursor-pointer"
             >
               {clients.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -289,7 +289,7 @@ export const ProcessesFlowchartView: React.FC = () => {
 
       {/* Slide-over Drawer for Stage Tasks */}
       {activeStageId && (
-        <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-40 border-l border-[#EFE8EB] p-6 flex flex-col justify-between animate-in slide-in-from-right duration-200">
+        <div className="fixed inset-y-0 right-0 w-full max-w-md overflow-y-auto bg-white shadow-2xl z-40 border-l border-[#EFE8EB] p-6 flex flex-col justify-between animate-in slide-in-from-right duration-200">
           <div>
             <div className="flex items-center justify-between pb-4 border-b border-[#F4E9ED]">
               <div>
@@ -308,7 +308,7 @@ export const ProcessesFlowchartView: React.FC = () => {
               </button>
             </div>
 
-            <div className="py-4 space-y-3 overflow-y-auto max-h-[calc(100vh-210px)]">
+            <div className="py-4 space-y-3 overflow-y-auto max-h-[calc(100dvh-210px)]">
               {stageTasks.map((t) => (
                 <div
                   key={t.id}

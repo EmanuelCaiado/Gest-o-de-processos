@@ -278,7 +278,7 @@ export const Modals: React.FC = () => {
       {/* 1. MODAL: NOVO CLIENTE (COM SELETOR DAS 54 TAREFAS DO MODELO RX) */}
       {isNewClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4 max-h-[calc(100dvh-2rem)] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[#F4E9ED]">
               <div className="flex items-center space-x-2">
                 <Briefcase className="w-5 h-5 text-[#651D32]" />
@@ -489,7 +489,7 @@ export const Modals: React.FC = () => {
       {/* 2. MODAL: EDITAR CLIENTE */}
       {editingClient && (
         <div className="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4 max-h-[calc(100dvh-2rem)] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[#F4E9ED]">
               <h3 className="font-bold text-base text-[#202020]">Editar Cliente</h3>
               <button
@@ -501,7 +501,7 @@ export const Modals: React.FC = () => {
             </div>
 
             <form onSubmit={handleUpdateClient} className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#202020] block mb-1">Nome do Cliente *</label>
                   <input
@@ -523,7 +523,7 @@ export const Modals: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#202020] block mb-1">Responsável RX</label>
                   <select
@@ -592,7 +592,7 @@ export const Modals: React.FC = () => {
       {/* 3. MODAL: NOVA TAREFA (COM SELEÇÃO DE ETAPA OU "SEM ETAPA") */}
       {isNewTaskModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4 max-h-[calc(100dvh-2rem)] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[#F4E9ED]">
               <h3 className="font-bold text-base text-[#202020]">Criar Nova Tarefa</h3>
               <button
@@ -627,7 +627,7 @@ export const Modals: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#202020] block mb-1">Cliente Vinculado</label>
                   <select
@@ -701,7 +701,7 @@ export const Modals: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#202020] block mb-1">Prioridade</label>
                   <select
@@ -757,7 +757,7 @@ export const Modals: React.FC = () => {
       {/* 4. MODAL: NOVO CONTEÚDO (KANBAN) */}
       {isNewContentModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4 max-h-[calc(100dvh-2rem)] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[#F4E9ED]">
               <h3 className="font-bold text-base text-[#202020]">Adicionar Conteúdo ao Kanban</h3>
               <button
@@ -781,7 +781,7 @@ export const Modals: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#202020] block mb-1">Formato</label>
                   <select
@@ -812,7 +812,7 @@ export const Modals: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#202020] block mb-1">Responsável</label>
                   <select
@@ -838,7 +838,7 @@ export const Modals: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#202020] block mb-1">Link do Roteiro</label>
                   <input
@@ -895,7 +895,7 @@ export const Modals: React.FC = () => {
       {/* 5. MODAL: NOVO EVENTO DE CALENDÁRIO */}
       {isNewEventModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4 max-h-[calc(100dvh-2rem)] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[#F4E9ED]">
               <h3 className="font-bold text-base text-[#202020]">Agendar Atividade Operacional</h3>
               <button
@@ -919,7 +919,7 @@ export const Modals: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#202020] block mb-1">Tipo de Evento</label>
                   <select
@@ -1018,7 +1018,7 @@ export const Modals: React.FC = () => {
       {/* 6. DRAWER / MODAL: DETALHES & EDIÇÃO DA TAREFA */}
       {selectedTaskId && currentDetailTask && (
         <div className="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#EFE8EB] space-y-4 max-h-[calc(100dvh-2rem)] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-[#F4E9ED]">
               <span className="text-[10px] font-bold text-[#651D32] uppercase bg-[#F4E9ED] px-2.5 py-0.5 rounded">
                 Etapa {currentDetailTask.stageId} • {currentDetailTask.clientName}
@@ -1053,7 +1053,7 @@ export const Modals: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#777777] block mb-1">Responsável</label>
                   <select
@@ -1097,7 +1097,7 @@ export const Modals: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-[#777777] block mb-1">Prioridade</label>
                   <select

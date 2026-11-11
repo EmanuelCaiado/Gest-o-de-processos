@@ -131,11 +131,11 @@ export const CalendarView: React.FC = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
+    <div className="p-4 sm:p-6 xl:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
       {/* Top Header */}
       <div className="bg-white rounded-xl border border-[#EFE8EB] p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Navigation & Month Title */}
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center space-x-1">
             <button
               onClick={handlePrev}
@@ -166,7 +166,7 @@ export const CalendarView: React.FC = () => {
         </div>
 
         {/* View Mode & Add Event */}
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="bg-[#F8F8F8] p-1 rounded-lg border border-[#EFE8EB] flex items-center space-x-1 text-xs">
             {(['mes', 'semana', 'dia'] as const).map((m) => (
               <button
@@ -216,8 +216,24 @@ export const CalendarView: React.FC = () => {
       </div>
 
       {/* MONTH VIEW */}
+      {viewMode === 'mes' && <section className="sm:hidden space-y-3" aria-label="Agenda do mês">
+        <p className="text-sm text-[#626262]">Agenda de {monthNames[month].toLowerCase()} · dias com atividades</p>
+        {daysArray.filter(day => getEventsForDay(day).length).map(day => (
+          <article key={day} className="rounded-xl border border-[#EFE8EB] bg-white p-4 space-y-3">
+            <h3 className="font-bold text-[#651D32]">{day} de {monthNames[month].toLowerCase()}</h3>
+            {getEventsForDay(day).map(evt => <div key={evt.id} className="border-t border-[#EFE8EB] pt-3 space-y-1">
+              {evt.isTask && evt.taskId
+                ? <button className="text-left font-semibold break-words" onClick={() => setSelectedTaskId(evt.taskId!)}>{evt.title}</button>
+                : <p className="font-semibold break-words">{evt.title}</p>}
+              <p className="text-sm text-[#626262] break-words">{evt.clientName} {evt.time ? `· ${evt.time}` : ''}</p>
+              <p className="text-sm text-[#626262]">{evt.responsibleName}</p>
+            </div>)}
+          </article>
+        ))}
+        {!daysArray.some(day => getEventsForDay(day).length) && <p className="rounded-xl border border-[#EFE8EB] bg-white p-5 text-sm text-[#626262]">Nenhuma atividade neste mês.</p>}
+      </section>}
       {viewMode === 'mes' && (
-        <div className="bg-white rounded-xl border border-[#EFE8EB] shadow-xs overflow-hidden">
+        <div className="hidden sm:block bg-white rounded-xl border border-[#EFE8EB] shadow-xs overflow-hidden">
           {/* Day of week headers */}
           <div className="grid grid-cols-7 border-b border-[#EFE8EB] bg-[#FDFBFC] text-center text-xs font-bold text-[#777777] uppercase py-2.5">
             <div>Dom</div>

@@ -94,15 +94,15 @@ export const DashboardView: React.FC = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-200">
+    <div className="p-4 sm:p-6 xl:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-200">
       {/* 5 Top Indicator Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-5 gap-3 sm:gap-4">
         {/* Tarefas Hoje */}
         <button
           onClick={() => setActiveTab('tasks')}
           className="bg-white p-5 rounded-xl border border-[#EFE8EB] shadow-xs hover:border-[#651D32]/40 transition text-left cursor-pointer group"
         >
-          <div className="flex items-center justify-between text-[#777777] mb-2">
+          <div className="flex flex-wrap gap-2 items-center justify-between text-[#777777] mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">Para Hoje</span>
             <div className="p-2 bg-[#F4E9ED] rounded-lg text-[#651D32] group-hover:scale-105 transition">
               <Clock className="w-4 h-4" />
@@ -121,7 +121,7 @@ export const DashboardView: React.FC = () => {
           onClick={() => setActiveTab('tasks')}
           className="bg-white p-5 rounded-xl border border-rose-200 shadow-xs hover:border-rose-400 transition text-left cursor-pointer group bg-gradient-to-br from-white to-rose-50/20"
         >
-          <div className="flex items-center justify-between text-rose-700 mb-2">
+          <div className="flex flex-wrap gap-2 items-center justify-between text-rose-700 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">Atrasadas</span>
             <div className="p-2 bg-rose-100 rounded-lg text-rose-700 group-hover:scale-105 transition">
               <AlertTriangle className="w-4 h-4" />
@@ -140,7 +140,7 @@ export const DashboardView: React.FC = () => {
           onClick={() => setActiveTab('tasks')}
           className="bg-white p-5 rounded-xl border border-[#EFE8EB] shadow-xs hover:border-[#651D32]/40 transition text-left cursor-pointer group"
         >
-          <div className="flex items-center justify-between text-[#777777] mb-2">
+          <div className="flex flex-wrap gap-2 items-center justify-between text-[#777777] mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">Em Andamento</span>
             <div className="p-2 bg-amber-50 rounded-lg text-amber-700 group-hover:scale-105 transition">
               <PlayCircle className="w-4 h-4" />
@@ -159,7 +159,7 @@ export const DashboardView: React.FC = () => {
           onClick={() => setActiveTab('tasks')}
           className="bg-white p-5 rounded-xl border border-[#EFE8EB] shadow-xs hover:border-[#651D32]/40 transition text-left cursor-pointer group"
         >
-          <div className="flex items-center justify-between text-[#777777] mb-2">
+          <div className="flex flex-wrap gap-2 items-center justify-between text-[#777777] mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">Concluídas</span>
             <div className="p-2 bg-emerald-50 rounded-lg text-emerald-700 group-hover:scale-105 transition">
               <CheckCircle className="w-4 h-4" />
@@ -178,7 +178,7 @@ export const DashboardView: React.FC = () => {
           onClick={() => setActiveTab('clients')}
           className="bg-white p-5 rounded-xl border border-[#EFE8EB] shadow-xs hover:border-[#651D32]/40 transition text-left cursor-pointer group"
         >
-          <div className="flex items-center justify-between text-[#777777] mb-2">
+          <div className="flex flex-wrap gap-2 items-center justify-between text-[#777777] mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">Clientes Ativos</span>
             <div className="p-2 bg-[#F4E9ED] rounded-lg text-[#651D32] group-hover:scale-105 transition">
               <Briefcase className="w-4 h-4" />
@@ -303,7 +303,7 @@ export const DashboardView: React.FC = () => {
               </div>
             ) : (
               <div className="overflow-x-auto mt-2">
-                <table className="w-full text-left">
+                <table className="responsive-records w-full text-left">
                   <thead>
                     <tr className="text-[11px] font-semibold text-[#777777] uppercase border-b border-[#F4E9ED]">
                       <th className="py-2.5 px-2">Atividade</th>
@@ -320,7 +320,7 @@ export const DashboardView: React.FC = () => {
                       const dueToday = isTaskDueToday(task, todayStr);
                       return (
                         <tr key={task.id} className="hover:bg-[#FDFBFC] transition">
-                          <td className="py-2.5 px-2 font-medium text-[#202020] max-w-xs truncate">
+                          <td data-label="Atividade" className="py-2.5 px-2 font-medium text-[#202020] max-w-xs truncate">
                             <button
                               onClick={() => setSelectedTaskId(task.id)}
                               className="text-left hover:text-[#651D32] font-semibold truncate block w-full cursor-pointer"
@@ -328,13 +328,13 @@ export const DashboardView: React.FC = () => {
                               {task.title}
                             </button>
                           </td>
-                          <td className="py-2.5 px-2 text-[#777777] font-medium whitespace-nowrap">
+                          <td data-label="Cliente" className="py-2.5 px-2 text-[#777777] font-medium whitespace-nowrap">
                             {task.clientName}
                           </td>
-                          <td className="py-2.5 px-2 whitespace-nowrap text-[#444444]">
+                          <td data-label="Responsável" className="py-2.5 px-2 whitespace-nowrap text-[#444444]">
                             {task.responsibleName}
                           </td>
-                          <td className="py-2.5 px-2 whitespace-nowrap">
+                          <td data-label="Prazo" className="py-2.5 px-2 whitespace-nowrap">
                             {overdue ? (
                               <span className="text-rose-700 font-bold bg-rose-50 px-2 py-0.5 rounded text-[11px]">
                                 {task.dueDate} (Atrasada)
@@ -349,10 +349,10 @@ export const DashboardView: React.FC = () => {
                               </span>
                             )}
                           </td>
-                          <td className="py-2.5 px-2 whitespace-nowrap">
+                          <td data-label="Prioridade" className="py-2.5 px-2 whitespace-nowrap">
                             {getPriorityBadge(task.priority)}
                           </td>
-                          <td className="py-2.5 px-2 text-right whitespace-nowrap">
+                          <td data-label="Ação" className="py-2.5 px-2 text-right whitespace-nowrap">
                             <button
                               onClick={() => toggleTaskComplete(task.id)}
                               className="text-[11px] font-semibold text-[#651D32] hover:text-[#521627] bg-[#F4E9ED] px-2.5 py-1 rounded-md transition cursor-pointer"
@@ -477,7 +477,7 @@ export const DashboardView: React.FC = () => {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between text-[11px] text-[#777777]">
+                      <div className="flex flex-wrap gap-2 items-center justify-between text-[11px] text-[#777777]">
                         <span>{prog.pending} tarefas pendentes</span>
                         <span className="text-[#202020] font-medium">Ciclo {client.cycleNumber || 1}</span>
                       </div>

@@ -18,7 +18,7 @@ import { useData } from '../context/DataContext';
 import type { UserItem } from '../data/seedData';
 import { BrandLogo } from './BrandLogo';
 
-export const Sidebar: React.FC = () => {
+export const Sidebar: React.FC<{ mobileOpen: boolean; onClose: () => void }> = ({ mobileOpen, onClose }) => {
   const {
     activeTab,
     setActiveTab,
@@ -39,6 +39,23 @@ export const Sidebar: React.FC = () => {
   const [isSwitching, setIsSwitching] = useState(false);
   const [logoutError, setLogoutError] = useState<string | null>(null);
   const switchDialog = useRef<HTMLElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.activeElement as HTMLElement | null;
+    sidebarRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+      if (event.key !== 'Tab') return;
+      const buttons = [...(sidebarRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled),input:not([tabindex="-1"])') || [])].filter(el => el.getClientRects().length);
+      const first = buttons[0], last = buttons[buttons.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener('keydown', keydown);
+    return () => { document.removeEventListener('keydown', keydown); previous?.focus(); };
+  }, [mobileOpen, onClose]);
 
   useEffect(() => {
     if (!switchTarget) return;
@@ -76,6 +93,7 @@ export const Sidebar: React.FC = () => {
   ] as const;
 
   const handleNavClick = (tabId: typeof navItems[number]['id']) => {
+    onClose();
     setActiveTab(tabId);
     if (tabId === 'clients') {
       setSelectedClientId(null);
@@ -83,10 +101,13 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside className="w-64 h-screen bg-white border-r border-[#EFE8EB] flex flex-col justify-between shrink-0 select-none z-20">
+    <>
+    {mobileOpen && <div className="fixed inset-0 z-30 bg-black/40 lg:hidden" aria-hidden="true" onClick={onClose} />}
+    <aside id="workspace-sidebar" ref={sidebarRef} aria-label="Menu e conta" role={mobileOpen ? 'dialog' : undefined} aria-modal={mobileOpen || undefined} className={`${mobileOpen ? 'flex' : 'hidden'} lg:flex fixed lg:static inset-y-0 left-0 w-72 max-w-[90vw] lg:w-64 h-dvh overflow-y-auto bg-white border-r border-[#EFE8EB] flex-col justify-between shrink-0 z-40 lg:z-20`}>
       {/* Brand Header */}
       <div>
         <div className="p-6 border-b border-[#F4E9ED] flex items-center justify-between">
+          <button aria-label="Fechar menu" onClick={onClose} className="lg:hidden absolute top-2 right-2 p-2 rounded-lg"><X className="h-5 w-5" /></button>
           <div className="flex items-center space-x-3">
             <BrandLogo className="w-10 h-10" />
             <div>
@@ -300,5 +321,6 @@ export const Sidebar: React.FC = () => {
         </div>
       )}
     </aside>
+    </>
   );
 };

@@ -71,7 +71,7 @@ export const ClientsView: React.FC = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
+    <div className="p-4 sm:p-6 xl:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
       {/* Top Controls Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-[#EFE8EB] shadow-xs">
         {/* Status Filters */}
@@ -124,7 +124,7 @@ export const ClientsView: React.FC = () => {
 
       {/* Empty State when 0 clients exist */}
       {filteredClients.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-[#EFE8EB] p-14 text-center space-y-4 shadow-xs">
+        <div className="bg-white rounded-2xl border border-[#EFE8EB] p-6 sm:p-14 text-center space-y-4 shadow-xs">
           <div className="w-16 h-16 rounded-2xl bg-[#F4E9ED] text-[#651D32] flex items-center justify-center mx-auto">
             <Briefcase className="w-8 h-8" />
           </div>
@@ -236,8 +236,8 @@ export const ClientsView: React.FC = () => {
         </div>
       ) : (
         /* Table View */
-        <div className="bg-white rounded-xl border border-[#EFE8EB] shadow-xs overflow-hidden">
-          <table className="w-full text-left text-xs">
+        <div className="bg-white rounded-xl border border-[#EFE8EB] shadow-xs overflow-x-auto">
+          <table className="responsive-records w-full text-left text-xs">
             <thead className="bg-[#F8F8F8] border-b border-[#EFE8EB] text-[#777777] uppercase text-[11px] font-semibold">
               <tr>
                 <th className="py-3 px-4">Cliente</th>
@@ -259,11 +259,11 @@ export const ClientsView: React.FC = () => {
                     onClick={() => setSelectedClientId(client.id)}
                     className="hover:bg-[#FDFBFC] transition cursor-pointer"
                   >
-                    <td className="py-3 px-4 font-bold text-[#202020]">
+                    <td data-label="Cliente" className="py-3 px-4 font-bold text-[#202020]">
                       <div>{client.name}</div>
                       <div className="text-[11px] font-normal text-[#777777]">{client.contactName}</div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td data-label="Status" className="py-3 px-4">
                       <span
                         className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full ${
                           client.status === 'ativo'
@@ -276,9 +276,9 @@ export const ClientsView: React.FC = () => {
                         {client.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-[#444444] font-medium">{client.responsibleName}</td>
-                    <td className="py-3 px-4 font-semibold text-rose-700">{prog.pending}</td>
-                    <td className="py-3 px-4 w-40">
+                    <td data-label="Responsável" className="py-3 px-4 text-[#444444] font-medium">{client.responsibleName}</td>
+                    <td data-label="Pendentes" className="py-3 px-4 font-semibold text-rose-700">{prog.pending}</td>
+                    <td data-label="Progresso" className="py-3 px-4 w-40">
                       <div className="flex items-center space-x-2">
                         <div className="flex-1 bg-[#F4E9ED] h-1.5 rounded-full overflow-hidden">
                           <div
@@ -289,8 +289,8 @@ export const ClientsView: React.FC = () => {
                         <span className="font-bold text-[11px] text-[#651D32]">{prog.percentage}%</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-[#777777] max-w-xs truncate">{nextAct}</td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap">
+                    <td data-label="Próxima atividade" className="py-3 px-4 text-[#777777] max-w-xs truncate">{nextAct}</td>
+                    <td data-label="Ações" className="py-3 px-4 text-right whitespace-nowrap">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();

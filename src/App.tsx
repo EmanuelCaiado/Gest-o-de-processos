@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DataProvider, useData } from './context/DataContext';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
@@ -13,11 +13,22 @@ import { TasksView } from './components/TasksView';
 import { CalendarView } from './components/CalendarView';
 import { ProcessesFlowchartView } from './components/ProcessesFlowchartView';
 import { Modals } from './components/Modals';
-import { ArrowRight, Lock, Mail, LoaderCircle } from 'lucide-react';
+import { ArrowRight, Lock, Mail, LoaderCircle, LayoutDashboard, Users, CheckSquare, Calendar, GitFork } from 'lucide-react';
 import { BrandLogo } from './components/BrandLogo';
 
 const MainLayout: React.FC = () => {
-  const { currentUser, activeTab, login, isSessionLoading } = useData();
+  const { currentUser, activeTab, navigateToTab, login, isSessionLoading } = useData();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  useEffect(() => {
+    if (!currentUser) setMenuOpen(false);
+  }, [currentUser?.id]);
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const resized = () => { if (desktop.matches) setMenuOpen(false); };
+    desktop.addEventListener('change', resized);
+    return () => desktop.removeEventListener('change', resized);
+  }, []);
 
   // Login form state
   const [loginUser, setLoginUser] = useState('');
@@ -125,15 +136,15 @@ const MainLayout: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[#F8F8F8] overflow-hidden select-none">
+    <div className="app-shell flex h-dvh bg-[#F8F8F8] overflow-hidden">
       {/* Fixed Sidebar */}
-      <Sidebar />
+      <Sidebar mobileOpen={menuOpen} onClose={closeMenu} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <Header />
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <Header onOpenMenu={() => setMenuOpen(true)} menuOpen={menuOpen} />
 
-        <main className="flex-1 overflow-y-auto pb-12">
+        <main id="workspace-content" className="workspace-content flex-1 min-h-0 overflow-y-auto pb-24 lg:pb-12">
           {activeTab === 'overview' && <DashboardView />}
           {activeTab === 'clients' && <ClientsView />}
           {activeTab === 'tasks' && <TasksView />}
@@ -141,6 +152,22 @@ const MainLayout: React.FC = () => {
           {activeTab === 'processes' && <ProcessesFlowchartView />}
         </main>
       </div>
+
+      <nav aria-label="Navegação principal" className="mobile-tabs fixed bottom-0 inset-x-0 z-20 grid grid-cols-5 border-t border-[#E8DFE3] bg-white lg:hidden">
+        {[
+          { id: 'overview', label: 'Início', icon: LayoutDashboard },
+          { id: 'clients', label: 'Clientes', icon: Users },
+          { id: 'tasks', label: 'Tarefas', icon: CheckSquare },
+          { id: 'calendar', label: 'Agenda', icon: Calendar },
+          { id: 'processes', label: 'Processos', icon: GitFork },
+        ].map(({ id, label, icon: Icon }) => (
+          <button key={id} aria-current={activeTab === id ? 'page' : undefined}
+            onClick={() => { navigateToTab(id as typeof activeTab); document.getElementById('workspace-content')?.scrollTo(0, 0); }}
+            className={`flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-[11px] font-semibold ${activeTab === id ? 'text-[#651D32] bg-[#F4E9ED]' : 'text-[#626262]'}`}>
+            <Icon className="h-5 w-5" /><span>{label}</span>
+          </button>
+        ))}
+      </nav>
 
       {/* Global Modals & Drawers */}
       <Modals />

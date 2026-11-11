@@ -168,7 +168,7 @@ export const ClientDetailView: React.FC<Props> = ({ clientId, onBack }) => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
+    <div className="p-4 sm:p-6 xl:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
       {/* 1. CABEÇALHO DEDICADO DO CLIENTE */}
       <div className="bg-white rounded-xl border border-[#EFE8EB] p-6 shadow-xs space-y-5">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -229,7 +229,7 @@ export const ClientDetailView: React.FC<Props> = ({ clientId, onBack }) => {
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center space-x-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={() => setEditingClient(client)}
               className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#F8F8F8] hover:bg-[#F4E9ED] text-[#202020] hover:text-[#651D32] rounded-lg text-xs font-semibold border border-[#EFE8EB] transition cursor-pointer"
@@ -279,7 +279,7 @@ export const ClientDetailView: React.FC<Props> = ({ clientId, onBack }) => {
         </div>
 
         {/* 4 ABAS INTERNAS (Tarefas em PRIMEIRO LUGAR conforme requisito) */}
-        <div className="flex border-b border-[#F4E9ED] pt-2 space-x-8">
+        <div className="flex overflow-x-auto border-b border-[#F4E9ED] pt-2 gap-5">
           {[
             { id: 'tasks', label: `Tarefas (${clientTasks.length})`, icon: CheckSquare },
             { id: 'contents', label: `Conteúdos (${clientContents.length})`, icon: Kanban },
@@ -292,7 +292,7 @@ export const ClientDetailView: React.FC<Props> = ({ clientId, onBack }) => {
               <button
                 key={tab.id}
                 onClick={() => setClientActiveTab(tab.id as typeof clientActiveTab)}
-                className={`flex items-center space-x-2 pb-3 text-xs font-bold border-b-2 transition cursor-pointer ${
+                className={`flex shrink-0 items-center space-x-2 pb-3 text-xs font-bold border-b-2 transition cursor-pointer ${
                   isActive
                     ? 'border-[#651D32] text-[#651D32]'
                     : 'border-transparent text-[#777777] hover:text-[#202020]'
@@ -939,7 +939,7 @@ export const ClientDetailView: React.FC<Props> = ({ clientId, onBack }) => {
 
           {/* Slide-over Drawer for Stage Tasks */}
           {selectedStageId && (
-            <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-40 border-l border-[#EFE8EB] p-6 flex flex-col justify-between animate-in slide-in-from-right duration-200">
+            <div className="fixed inset-y-0 right-0 w-full max-w-md overflow-y-auto bg-white shadow-2xl z-40 border-l border-[#EFE8EB] p-6 flex flex-col justify-between animate-in slide-in-from-right duration-200">
               <div>
                 <div className="flex items-center justify-between pb-4 border-b border-[#F4E9ED]">
                   <div>
@@ -958,7 +958,7 @@ export const ClientDetailView: React.FC<Props> = ({ clientId, onBack }) => {
                   </button>
                 </div>
 
-                <div className="py-4 space-y-3 overflow-y-auto max-h-[calc(100vh-200px)]">
+                <div className="py-4 space-y-3 overflow-y-auto max-h-[calc(100dvh-200px)]">
                   {clientTasks
                     .filter((t) => t.stageId === selectedStageId)
                     .map((t) => (

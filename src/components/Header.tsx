@@ -1,8 +1,8 @@
 import React from 'react';
-import { Search, Plus, CheckCircle2, RefreshCw, ArrowLeft } from 'lucide-react';
+import { Search, Plus, CheckCircle2, RefreshCw, ArrowLeft, Menu } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
-export const Header: React.FC = () => {
+export const Header: React.FC<{ onOpenMenu: () => void; menuOpen: boolean }> = ({ onOpenMenu, menuOpen }) => {
   const {
     activeTab,
     selectedClientId,
@@ -45,8 +45,9 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="h-18 bg-white border-b border-[#EFE8EB] px-8 flex items-center justify-between shrink-0 sticky top-0 z-10">
-      <div className="flex items-center space-x-4">
+    <header className="workspace-header bg-white border-b border-[#EFE8EB] px-4 py-3 lg:px-8 flex flex-col xl:flex-row xl:items-center justify-between gap-3 shrink-0 z-10">
+      <div className="flex items-center gap-3 min-w-0">
+        <button type="button" onClick={onOpenMenu} aria-label="Abrir menu e conta" aria-expanded={menuOpen} aria-controls="workspace-sidebar" className="lg:hidden shrink-0 rounded-lg border border-[#E8DFE3] p-2.5 text-[#651D32]"><Menu className="h-5 w-5" /></button>
         {/* Navigation Back Button */}
         {canGoBack && (
           <button
@@ -60,11 +61,12 @@ export const Header: React.FC = () => {
         )}
 
         <div>
-          <h2 className="text-lg font-bold text-[#202020] tracking-tight flex items-center space-x-2">
-            <span>{getTitle()}</span>
+          <h2 className="text-lg font-bold text-[#202020] tracking-tight flex flex-wrap items-center gap-2">
+            <span className="hidden sm:inline">{getTitle()}</span>
+            <span className="sm:hidden">{activeClient && activeTab === 'clients' ? 'Detalhes do cliente' : getTitle()}</span>
             {activeClient && activeTab === 'clients' && (
               <span
-                className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
+                className={`text-xs shrink-0 whitespace-nowrap px-2.5 py-0.5 rounded-full font-medium ${
                   activeClient.status === 'ativo'
                     ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                     : activeClient.status === 'pausado'
@@ -80,21 +82,22 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="header-actions flex items-center gap-2 min-w-0">
         {/* Search Bar */}
-        <div className="relative w-64">
+        <div className="relative flex-1 min-w-0 xl:w-56">
           <Search className="w-4 h-4 text-[#777777] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Buscar tarefas, clientes..."
+            aria-label="Buscar tarefas ou clientes"
             className="w-full pl-9 pr-3 py-1.5 bg-[#F8F8F8] border border-[#E8DFE3] rounded-lg text-xs text-[#202020] placeholder-[#999999] focus:outline-none focus:ring-1 focus:ring-[#651D32] focus:border-[#651D32] transition"
           />
         </div>
 
         {/* Sync Status */}
-        <div className="flex items-center space-x-1.5 text-xs text-[#777777] bg-[#F8F8F8] px-2.5 py-1.5 rounded-lg border border-[#EFE8EB]">
+        <div role="status" className="hidden sm:flex items-center space-x-1.5 text-xs text-[#777777] bg-[#F8F8F8] px-2.5 py-1.5 rounded-lg border border-[#EFE8EB] shrink-0">
           {isSaving ? (
             <>
               <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#651D32]" />
