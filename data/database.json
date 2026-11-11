@@ -1,0 +1,58 @@
+{
+  "users": [
+    {
+      "id": "usr_emanuel",
+      "name": "Emanuel (Cofundador)",
+      "username": "emanuelrx",
+      "email": "emanuelrx@rxestudio.com",
+      "role": "admin",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      "title": "Cofundador & Direção Geral",
+      "password": "adminrx"
+    },
+    {
+      "id": "usr_renan",
+      "name": "Renan (Cofundador)",
+      "username": "renanrx",
+      "email": "renanrx@rxestudio.com",
+      "role": "admin",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      "title": "Cofundador & Estratégia",
+      "password": "adminrx"
+    },
+    {
+      "id": "usr_vitor",
+      "name": "Vitor (Editor)",
+      "username": "vitorrx",
+      "email": "vitorrx@rxestudio.com",
+      "role": "integrante",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80",
+      "title": "Editor Chefe & Produção",
+      "password": "rx0001"
+    }
+  ],
+  "clients": [],
+  "tasks": [],
+  "contents": [],
+  "calendarEvents": [],
+  "auditLogs": [
+    {
+      "id": "log_1794410787726_4i8e",
+      "entityType": "client",
+      "entityId": "usr_vitor",
+      "action": "Login efetuado",
+      "userName": "Sistema",
+      "timestamp": "2026-11-11T15:26:27.726Z",
+      "details": "Usuário Vitor (Editor) autenticado no RX Workspace."
+    },
+    {
+      "id": "log_1794410743958_aaov",
+      "entityType": "client",
+      "entityId": "usr_emanuel",
+      "action": "Login efetuado",
+      "userName": "Sistema",
+      "timestamp": "2026-11-11T15:25:43.958Z",
+      "details": "Usuário Emanuel (Cofundador) autenticado no RX Workspace."
+    }
+  ]
+}

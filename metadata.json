@@ -1,0 +1,8 @@
+{
+  "name": "RX Workspace",
+  "description": "Sistema interno de gestão de clientes, processos, conteúdos e tarefas da RX Estúdio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

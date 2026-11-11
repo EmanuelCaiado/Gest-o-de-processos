@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --rx-wine-main: #651D32;
+    --rx-wine-dark: #3B1020;
+    --rx-wine-soft: #F4E9ED;
+    --rx-wine-hover: #541627;
+    --rx-bg-main: #F8F8F8;
+    --rx-text-main: #202020;
+    --rx-text-sec: #777777;
+    --rx-card-bg: #FFFFFF;
+  }
+
+  body {
+    background-color: var(--rx-bg-main);
+    color: var(--rx-text-main);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Custom scrollbars for Kanban and tables */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E2D9DD;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C4B5BC;
+}
