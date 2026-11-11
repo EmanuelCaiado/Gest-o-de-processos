@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -83,9 +84,11 @@ async function startServer() {
   });
 
   app.get('/api/supabase/status', async (req, res) => {
-    const url = process.env.VITE_SUPABASE_URL || 'https://dwrithtmlchmuygobgjj.supabase.co';
-    const key = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_OVwFkjQBKuPYyxL8AVDRxA_X6he97in';
-    const jwksUrl = process.env.VITE_SUPABASE_JWKS_URL || 'https://dwrithtmlchmuygobgjj.supabase.co/auth/v1/.well-known/jwks.json';
+    const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://dwrithtmlchmuygobgjj.supabase.co';
+    const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_OVwFkjQBKuPYyxL8AVDRxA_X6he97in';
+    const jwksUrl = process.env.SUPABASE_JWKS_URL ||
+      (!process.env.SUPABASE_URL && process.env.VITE_SUPABASE_JWKS_URL) ||
+      `${url}/auth/v1/.well-known/jwks.json`;
 
     const checks: Record<string, any> = {
       projectUrl: url,
