@@ -1,0 +1,9 @@
+{
+  "name": "RX Workspace",
+  "short_name": "RX",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#c60016",
+  "icons": [{ "src": "/rx-logo.png", "sizes": "800x800", "type": "image/png", "purpose": "any" }]
+}

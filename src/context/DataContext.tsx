@@ -7,7 +7,7 @@ import {
   generateClientTemplateTasks,
   STAGE_TEMPLATES,
 } from '../utils/metrics';
-import { UserItem, AuditLogItem, AppDatabase, getInitialSeedDatabase } from '../data/seedData';
+import { UserItem, AuditLogItem, AppDatabase, INITIAL_USERS, getInitialSeedDatabase } from '../data/seedData';
 import {
   supabase,
   isSupabaseConfigured,
@@ -18,9 +18,12 @@ import {
   deleteClientFromSupabase,
 } from '../lib/supabase';
 
+import { requestAuth, restoreSession, type AuthResult } from '../lib/auth';
+
 interface DataContextType {
   // State
   currentUser: UserItem | null;
+  isSessionLoading: boolean;
   users: UserItem[];
   clients: ClientItem[];
   tasks: TaskItem[];
@@ -64,9 +67,9 @@ interface DataContextType {
   checkSupabase: () => Promise<void>;
 
   // Auth
-  login: (loginInput: string, passwordInput: string) => { success: boolean; error?: string };
-  logout: () => void;
-  switchUser: (userId: string) => void;
+  login: (loginInput: string, passwordInput: string) => Promise<AuthResult>;
+  logout: () => Promise<AuthResult>;
+  switchUser: (userId: string, password: string) => Promise<AuthResult>;
 
   // Client operations
   addClient: (
@@ -125,7 +128,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.removeItem(LOCAL_STORAGE_KEY);
           return getInitialSeedDatabase();
         }
-        return parsed;
+        return { ...parsed, users: INITIAL_USERS };
       }
     } catch {
       // ignore
@@ -133,20 +136,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return getInitialSeedDatabase();
   });
 
-  const [currentUser, setCurrentUser] = useState<UserItem | null>(() => {
-    try {
-      const saved = localStorage.getItem(CURRENT_USER_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && ['usr_emanuel', 'usr_renan', 'usr_vitor'].includes(parsed.id)) {
-          return parsed;
-        }
-      }
-    } catch {
-      // ignore
-    }
-    return null; // Start unauthenticated if not already logged in
-  });
+  const [currentUser, setCurrentUser] = useState<UserItem | null>(null);
+  const [isSessionLoading, setIsSessionLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    // Old browser storage never authenticates a user.
+    try { localStorage.removeItem(CURRENT_USER_KEY); } catch { /* Storage may be disabled. */ }
+    restoreSession().then(user => { if (mounted) setCurrentUser(user); })
+      .catch(() => { if (mounted) setCurrentUser(null); })
+      .finally(() => { if (mounted) setIsSessionLoading(false); });
+    return () => { mounted = false; };
+  }, []);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'clients' | 'tasks' | 'calendar' | 'processes'>('overview');
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
@@ -248,6 +249,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fetch from server / Supabase on mount
   useEffect(() => {
     let mounted = true;
+    if (!currentUser) { setIsLoading(false); return; }
     async function loadFromServer() {
       try {
         setIsLoading(true);
@@ -260,6 +262,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const cleanClientIds = new Set(cleanClients.map((c) => c.id));
             const cleanDb: AppDatabase = {
               ...serverDb,
+              users: INITIAL_USERS,
               clients: cleanClients,
               tasks: serverDb.tasks.filter((t) => cleanClientIds.has(t.clientId)),
               contents: serverDb.contents.filter((c) => cleanClientIds.has(c.clientId)),
@@ -279,16 +282,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       mounted = false;
     };
-  }, []);
-
-  // Sync current user to localStorage
-  useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem(CURRENT_USER_KEY);
-    }
-  }, [currentUser]);
+  }, [currentUser?.id]);
 
   // Audit log helper
   const logAudit = useCallback(
@@ -314,82 +308,40 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [currentUser, persistDatabase]
   );
 
-  // Auth methods
-  const login = useCallback(
-    (loginInput: string, passwordInput: string): { success: boolean; error?: string } => {
-      const cleanLogin = (loginInput || '').trim().toLowerCase();
-      const cleanPass = (passwordInput || '').trim();
+  // Password verification and remembered sessions are handled by the server.
+  const login = useCallback(async (loginInput: string, passwordInput: string): Promise<AuthResult> => {
+    const result = await requestAuth('login', { login: loginInput.trim(), password: passwordInput });
+    if (!result.success || !result.user) return { success: false, error: result.error };
+    setCurrentUser(result.user);
+    setActiveTab('overview');
+    setSelectedClientId(null);
+    logAudit('client', result.user.id, 'Login efetuado', 'Acesso validado.');
+    return { success: true };
+  }, [logAudit]);
 
-      if (!cleanLogin) {
-        return { success: false, error: 'Por favor, informe seu usuário ou e-mail.' };
-      }
-      if (!cleanPass) {
-        return { success: false, error: 'Por favor, informe sua senha.' };
-      }
-
-      // Match user strictly among Emanuel, Renan, and Vitor
-      let targetUser: UserItem | undefined;
-      if (cleanLogin === 'emanuelrx' || cleanLogin === 'emanuel' || cleanLogin.includes('emanuel')) {
-        targetUser = data.users.find((u) => u.id === 'usr_emanuel');
-      } else if (cleanLogin === 'renanrx' || cleanLogin === 'renan' || cleanLogin.includes('renan')) {
-        targetUser = data.users.find((u) => u.id === 'usr_renan');
-      } else if (cleanLogin === 'vitorrx' || cleanLogin === 'vitor' || cleanLogin.includes('vitor')) {
-        targetUser = data.users.find((u) => u.id === 'usr_vitor');
-      } else {
-        targetUser = data.users.find(
-          (u) =>
-            (u.username && u.username.toLowerCase() === cleanLogin) ||
-            u.email.toLowerCase() === cleanLogin
-        );
-      }
-
-      if (!targetUser) {
-        return {
-          success: false,
-          error: 'Usuário não reconhecido. Acesso restrito a Emanuel (emanuelrx), Renan (renanrx) e Vitor (vitorrx).',
-        };
-      }
-
-      // Exact password rule requested:
-      // Emanuel & Renan: adminrx
-      // Vitor: rx0001
-      const expectedPassword = targetUser.id === 'usr_vitor' ? 'rx0001' : 'adminrx';
-
-      if (cleanPass !== expectedPassword) {
-        return {
-          success: false,
-          error: 'Senha incorreta. Verifique sua senha e tente novamente.',
-        };
-      }
-
-      setCurrentUser(targetUser);
-      try {
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(targetUser));
-      } catch (e) {
-        console.warn('LocalStorage error:', e);
-      }
-      logAudit('client', targetUser.id, 'Login efetuado', `Usuário ${targetUser.name} autenticado no RX Workspace.`);
-      return { success: true };
-    },
-    [data.users, logAudit]
-  );
-
-  const logout = useCallback(() => {
+  const logout = useCallback(async (): Promise<AuthResult> => {
+    const result = await requestAuth('logout');
+    if (!result.success) return result;
     setCurrentUser(null);
-    try {
-      localStorage.removeItem(CURRENT_USER_KEY);
-    } catch {}
+    setActiveTab('overview');
+    setSelectedClientId(null);
+    setSelectedTaskId(null);
+    setNavHistory([]);
+    try { localStorage.removeItem(CURRENT_USER_KEY); } catch { /* Storage may be disabled. */ }
+    return { success: true };
   }, []);
 
-  const switchUser = useCallback(
-    (userId: string) => {
-      const u = data.users.find((user) => user.id === userId);
-      if (u) {
-        setCurrentUser(u);
-      }
-    },
-    [data.users]
-  );
+  const switchUser = useCallback(async (userId: string, password: string): Promise<AuthResult> => {
+    const result = await requestAuth('switch', { userId, password });
+    if (!result.success || !result.user) return { success: false, error: result.error };
+    setCurrentUser(result.user);
+    setActiveTab('overview');
+    setSelectedClientId(null);
+    setSelectedTaskId(null);
+    setNavHistory([]);
+    logAudit('client', result.user.id, 'Integrante alternado', 'Senha validada para troca de conta.');
+    return { success: true };
+  }, [logAudit]);
 
   // Client operations
   const addClient = useCallback(
@@ -833,6 +785,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value = useMemo(
     () => ({
       currentUser,
+      isSessionLoading,
       users: data.users,
       clients: data.clients,
       tasks: data.tasks,
@@ -896,6 +849,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }),
     [
       currentUser,
+      isSessionLoading,
       data.users,
       data.clients,
       data.tasks,

@@ -39,7 +39,6 @@ export const INITIAL_USERS: UserItem[] = [
     role: 'admin',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
     title: 'Cofundador & Direção Geral',
-    password: 'adminrx',
   },
   {
     id: 'usr_renan',
@@ -49,7 +48,6 @@ export const INITIAL_USERS: UserItem[] = [
     role: 'admin',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
     title: 'Cofundador & Estratégia',
-    password: 'adminrx',
   },
   {
     id: 'usr_vitor',
@@ -59,7 +57,6 @@ export const INITIAL_USERS: UserItem[] = [
     role: 'integrante',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80',
     title: 'Editor Chefe & Produção',
-    password: 'rx0001',
   },
 ];
 

@@ -13,39 +13,45 @@ import { TasksView } from './components/TasksView';
 import { CalendarView } from './components/CalendarView';
 import { ProcessesFlowchartView } from './components/ProcessesFlowchartView';
 import { Modals } from './components/Modals';
-import { ShieldCheck, UserCheck, ArrowRight, Lock, Mail } from 'lucide-react';
+import { ArrowRight, Lock, Mail, LoaderCircle } from 'lucide-react';
+import { BrandLogo } from './components/BrandLogo';
 
 const MainLayout: React.FC = () => {
-  const { currentUser, activeTab, login, users } = useData();
+  const { currentUser, activeTab, login, isSessionLoading } = useData();
 
   // Login form state
   const [loginUser, setLoginUser] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setLoginError(null);
-    const result = login(loginUser, loginPassword);
-    if (!result.success) {
-      setLoginError(result.error || 'Credenciais inválidas. Verifique seu usuário e senha.');
+    setIsSubmitting(true);
+    try {
+      const result = await login(loginUser, loginPassword);
+      if (!result.success) setLoginError(result.error || 'Usuário ou senha incorretos.');
+      else setLoginPassword('');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleQuickFill = (username: string, pass: string) => {
-    setLoginUser(username);
-    setLoginPassword(pass);
-    setLoginError(null);
-  };
+  if (isSessionLoading) {
+    return <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#F8F8F8]" role="status">
+      <BrandLogo className="w-16 h-16" />
+      <span className="text-sm text-[#777777]">Verificando acesso…</span>
+    </div>;
+  }
 
   if (!currentUser) {
     return (
       <div className="min-h-screen bg-[#F8F8F8] flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-2xl border border-[#EFE8EB] p-8 shadow-xl space-y-6">
           <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-xl bg-[#651D32] text-white font-extrabold text-xl flex items-center justify-center mx-auto shadow-md">
-              RX
-            </div>
+            <BrandLogo className="w-16 h-16 mx-auto" />
             <h1 className="text-xl font-bold text-[#202020] tracking-tight">
               RX Workspace
             </h1>
@@ -55,7 +61,7 @@ const MainLayout: React.FC = () => {
           </div>
 
           {loginError && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center space-x-2 animate-in fade-in">
+            <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center space-x-2 animate-in fade-in">
               <span className="font-semibold">Erro:</span>
               <span>{loginError}</span>
             </div>
@@ -63,7 +69,7 @@ const MainLayout: React.FC = () => {
 
           <form onSubmit={handleLoginSubmit} className="space-y-4 text-xs">
             <div>
-              <label className="font-semibold text-[#202020] block mb-1">
+              <label htmlFor="login-user" className="font-semibold text-[#202020] block mb-1">
                 Usuário ou E-mail
               </label>
               <div className="relative">
@@ -71,7 +77,10 @@ const MainLayout: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="Ex: emanuelrx, renanrx ou vitorrx"
+                  id="login-user"
+                  name="username"
+                  autoComplete="username"
+                  placeholder="Digite seu usuário ou e-mail"
                   value={loginUser}
                   onChange={(e) => setLoginUser(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 bg-[#F8F8F8] border border-[#E8DFE3] rounded-lg text-xs font-medium text-[#202020] placeholder-[#999999] focus:outline-none focus:ring-1 focus:ring-[#651D32] focus:border-[#651D32]"
@@ -80,13 +89,16 @@ const MainLayout: React.FC = () => {
             </div>
 
             <div>
-              <label className="font-semibold text-[#202020] block mb-1">
+              <label htmlFor="login-password" className="font-semibold text-[#202020] block mb-1">
                 Senha de acesso
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-[#777777] absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="password"
+                  id="login-password"
+                  name="password"
+                  autoComplete="current-password"
                   required
                   placeholder="••••••••"
                   value={loginPassword}
@@ -98,53 +110,15 @@ const MainLayout: React.FC = () => {
 
             <button
               type="submit"
+              disabled={isSubmitting}
               className="w-full py-2.5 bg-[#651D32] text-white font-bold rounded-lg hover:bg-[#521627] transition shadow-xs flex items-center justify-center space-x-1.5 cursor-pointer text-xs"
             >
-              <span>Acessar RX Workspace</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{isSubmitting ? 'Entrando…' : 'Acessar RX Workspace'}</span>
+              {isSubmitting ? <LoaderCircle className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
             </button>
           </form>
 
-          {/* Equipe autorizada */}
-          <div className="pt-4 border-t border-[#F4E9ED]">
-            <span className="text-[10px] font-semibold text-[#777777] uppercase tracking-wider block mb-2 text-center">
-              Integrantes Autorizados da Equipe:
-            </span>
-            <div className="space-y-1.5">
-              {users.map((u) => {
-                const pass = u.id === 'usr_vitor' ? 'rx0001' : 'adminrx';
-                return (
-                  <button
-                    key={u.id}
-                    type="button"
-                    onClick={() => handleQuickFill(u.username, pass)}
-                    className="w-full flex items-center justify-between p-2 rounded-lg bg-[#F8F8F8] hover:bg-[#F4E9ED] border border-[#EFE8EB] transition cursor-pointer text-left"
-                    title={`Preencher credenciais de ${u.name}`}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <img src={u.avatar} alt={u.name} className="w-6 h-6 rounded-full object-cover" />
-                      <div>
-                        <div className="text-xs font-semibold text-[#202020]">{u.name}</div>
-                        <div className="text-[10px] text-[#777777]">
-                          Login: <code className="text-[#651D32] font-mono font-semibold">{u.username}</code>
-                        </div>
-                      </div>
-                    </div>
-                    <span
-                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
-                        u.role === 'admin' ? 'bg-[#651D32]/10 text-[#651D32]' : 'bg-gray-200 text-gray-700'
-                      }`}
-                    >
-                      {u.title.split('&')[0].trim()}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            <p className="text-[10px] text-center text-[#999999] mt-2">
-              Clique em um integrante para autopreencher as credenciais
-            </p>
-          </div>
+
         </div>
       </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -11,8 +11,12 @@ import {
   UserCheck,
   PlusCircle,
   RotateCcw,
+  Lock,
+  X,
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import type { UserItem } from '../data/seedData';
+import { BrandLogo } from './BrandLogo';
 
 export const Sidebar: React.FC = () => {
   const {
@@ -29,6 +33,39 @@ export const Sidebar: React.FC = () => {
   } = useData();
 
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [switchTarget, setSwitchTarget] = useState<UserItem | null>(null);
+  const [switchPassword, setSwitchPassword] = useState('');
+  const [switchError, setSwitchError] = useState<string | null>(null);
+  const [isSwitching, setIsSwitching] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
+  const switchDialog = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!switchTarget) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    return () => { previousFocus?.focus(); };
+  }, [switchTarget]);
+
+  const closeSwitch = () => {
+    if (isSwitching) return;
+    setSwitchTarget(null);
+    setSwitchPassword('');
+    setSwitchError(null);
+  };
+
+  const confirmSwitch = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!switchTarget || isSwitching) return;
+    setIsSwitching(true);
+    setSwitchError(null);
+    try {
+      const result = await switchUser(switchTarget.id, switchPassword);
+      if (result.success) {
+        setSwitchTarget(null);
+        setSwitchPassword('');
+      } else setSwitchError(result.error || 'Não foi possível trocar de integrante.');
+    } finally { setIsSwitching(false); }
+  };
 
   const navItems = [
     { id: 'overview', label: 'Visão Geral', icon: LayoutDashboard },
@@ -51,9 +88,7 @@ export const Sidebar: React.FC = () => {
       <div>
         <div className="p-6 border-b border-[#F4E9ED] flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-lg bg-[#651D32] flex items-center justify-center text-white font-bold text-lg shadow-sm">
-              RX
-            </div>
+            <BrandLogo className="w-10 h-10" />
             <div>
               <h1 className="font-bold text-base tracking-tight text-[#202020] leading-none">
                 RX Workspace
@@ -126,8 +161,12 @@ export const Sidebar: React.FC = () => {
                 <button
                   key={u.id}
                   onClick={() => {
-                    switchUser(u.id);
                     setShowUserDropdown(false);
+                    if (u.id !== currentUser?.id) {
+                      setSwitchTarget(u);
+                      setSwitchPassword('');
+                      setSwitchError(null);
+                    }
                   }}
                   className={`w-full flex items-center space-x-2.5 px-2.5 py-2 rounded-lg text-xs font-medium transition text-left cursor-pointer ${
                     currentUser?.id === u.id
@@ -205,7 +244,10 @@ export const Sidebar: React.FC = () => {
             </button>
 
             <button
-              onClick={logout}
+              onClick={async () => {
+                const result = await logout();
+                setLogoutError(result.success ? null : result.error || 'Não foi possível sair. Tente novamente.');
+              }}
               className="p-1.5 text-[#777777] hover:text-[#651D32] hover:bg-[#F4E9ED] rounded-lg transition ml-1 cursor-pointer"
               title="Sair do sistema"
               aria-label="Sair do sistema"
@@ -214,14 +256,49 @@ export const Sidebar: React.FC = () => {
             </button>
           </div>
         ) : (
-          <button
-            onClick={() => switchUser(users[0]?.id || '')}
-            className="w-full py-2 bg-[#651D32] text-white text-xs font-semibold rounded-lg hover:bg-[#521627] transition cursor-pointer"
-          >
-            Entrar no Sistema
-          </button>
+          <span className="text-xs text-[#777777]">Entre para acessar o sistema.</span>
         )}
+        {logoutError && <p role="alert" className="mt-2 text-xs text-red-700">{logoutError}</p>}
       </div>
+      {switchTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onKeyDown={event => {
+            if (event.key === 'Escape') closeSwitch();
+            if (event.key === 'Tab') {
+              const controls = switchDialog.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not([tabindex="-1"]):not(:disabled)');
+              if (!controls?.length) { event.preventDefault(); return; }
+              const first = controls[0], last = controls[controls.length - 1];
+              if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+              if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+            }
+          }}>
+          <section ref={switchDialog} role="dialog" aria-modal="true" aria-labelledby="switch-title"
+            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl border border-[#EFE8EB]">
+            <div className="flex items-center justify-between mb-4">
+              <h2 id="switch-title" className="font-bold text-[#202020]">Trocar integrante</h2>
+              <button type="button" onClick={closeSwitch} disabled={isSwitching} aria-label="Cancelar troca" className="p-1 rounded hover:bg-gray-100">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-sm text-[#777777] mb-4">Informe a senha de <strong className="text-[#202020]">{switchTarget.name}</strong> para continuar.</p>
+            <form onSubmit={confirmSwitch} className="space-y-4">
+              <input type="text" name="username" autoComplete="username" value={switchTarget.username} readOnly className="sr-only" tabIndex={-1} aria-label="Integrante selecionado" />
+              <label htmlFor="switch-password" className="block text-xs font-semibold text-[#202020]">Senha do integrante</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#777777]" />
+                <input id="switch-password" name="password" type="password" autoComplete="current-password" autoFocus required
+                  value={switchPassword} onChange={event => setSwitchPassword(event.target.value)}
+                  className="w-full rounded-lg border border-[#E8DFE3] py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#651D32]" />
+              </div>
+              {switchError && <p role="alert" className="text-xs text-red-700">{switchError}</p>}
+              <div className="flex justify-end gap-2">
+                <button type="button" disabled={isSwitching} onClick={closeSwitch} className="px-4 py-2 text-sm rounded-lg border border-[#E8DFE3]">Cancelar</button>
+                <button type="submit" disabled={isSwitching} className="px-4 py-2 text-sm rounded-lg bg-[#651D32] text-white disabled:opacity-60">{isSwitching ? 'Validando…' : 'Confirmar troca'}</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
     </aside>
   );
 };

@@ -3,7 +3,8 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getInitialSeedDatabase, AppDatabase } from './src/data/seedData';
+import { getInitialSeedDatabase, INITIAL_USERS, AppDatabase } from './src/data/seedData';
+import { handleAuth, sessionUser } from './server/auth';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,6 +43,18 @@ function saveData(data: AppDatabase) {
 async function startServer() {
   const app = express();
   app.use(express.json({ limit: '10mb' }));
+  app.all('/api/auth', (req, res) => { void handleAuth(req, res); });
+  app.use(['/api/data', '/api/reset'], (req, res, next) => {
+    try {
+      if (!sessionUser(req.headers.cookie)) {
+        res.status(401).json({ error: 'Entre para acessar os dados.' });
+        return;
+      }
+      next();
+    } catch {
+      res.status(503).json({ error: 'O acesso não foi configurado no servidor.' });
+    }
+  });
 
   // API endpoints
   app.get('/api/health', (req, res) => {
@@ -51,7 +64,7 @@ async function startServer() {
   app.get('/api/data', (req, res) => {
     try {
       const data = ensureData();
-      res.json(data);
+      res.json({ ...data, users: INITIAL_USERS });
     } catch (err) {
       console.error('Failed to get data:', err);
       res.status(500).json({ error: 'Erro ao carregar dados' });
